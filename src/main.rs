@@ -1,6 +1,7 @@
 extern crate rand;
 
 mod card;
+mod game;
 mod poker;
 
 use card::{Card, Suit, Rank};
