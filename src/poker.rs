@@ -64,6 +64,7 @@ impl Hand {
                 cards.push(*card);
             }
         }
+        thread_rng().shuffle(&mut cards);
         Hand { cards: cards }
     }
 
@@ -74,6 +75,16 @@ impl Hand {
         let mut hand = Hand { cards: vec!() };
         for i in 0..size {
             hand.cards.push(full_deck.cards[i]);
+        }
+        hand
+    }
+
+    // returns a hand from input deck with length of the input
+    pub fn hand_from(deck: &mut Hand, size: usize) -> Hand {
+        let mut hand = Hand { cards: vec!() };
+        for i in 0..size {
+            hand.cards.push(deck.cards[i]);
+            deck.cards.remove(i);
         }
         hand
     }
