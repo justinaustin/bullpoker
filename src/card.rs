@@ -99,6 +99,24 @@ impl Rank {
             _ => None,
         }
     }
+    pub fn from_str(s: &str) -> Option<Rank> {
+        match s {
+            "2" => Some(Rank::Two),
+            "3" => Some(Rank::Three),
+            "4" => Some(Rank::Four),
+            "5" => Some(Rank::Five),
+            "6" => Some(Rank::Six),
+            "7" => Some(Rank::Seven),
+            "8" => Some(Rank::Eight),
+            "9" => Some(Rank::Nine),
+            "10" => Some(Rank::Ten),
+            "J" => Some(Rank::Jack),
+            "Q" => Some(Rank::Queen),
+            "K" => Some(Rank::King),
+            "A" => Some(Rank::Ace),
+            _ => None,
+        }
+    }
 }
 
 impl PartialOrd for Card {

@@ -2,11 +2,13 @@ use std::collections::HashMap;
 
 use poker::{Hand, HandValue};
 
+#[derive(Debug, Clone)]
 pub struct Player {
-    pub name: String,
+    pub name: u8,
     pub hand: Hand,
 }
 
+#[derive(Clone, Debug)]
 pub struct GameState {
     pub players: Vec<Player>,
     pub current_turn: usize,
@@ -16,26 +18,31 @@ pub struct GameState {
 pub enum GameMove {
     NewGame(u8, u8),
     Bet(HandValue),
-    Call()
+    Call(),
 }
 
 impl GameState {
-    pub fn handle_gamemove(mut self, gm: GameMove) {
+    pub fn handle_gamemove(mut self, gm: GameMove) -> GameState {
         match gm {
             GameMove::NewGame(num_players, init_handsize) => {
-                if let Some(gamestate) = 
-                    GameState::init_game(num_players, init_handsize) {
-                    self = gamestate;
-                } else { panic!("TODO") }
-            },
+                if let Some(gamestate) = GameState::init_game(num_players, init_handsize) {
+                    gamestate
+                } else {
+                    panic!("TODO")
+                }
+            }
             GameMove::Bet(hv) => {
                 self.turn_after(hv);
-            },
-            GameMove::Call() => { let _ = self.handle_call(); },
-        }; 
+                return self.clone();
+            }
+            GameMove::Call() => {
+                let _ = self.handle_call();
+                return self.clone();
+            }
+        }
     }
 
-    fn init_game(num_players: u8, init_handsize: u8) -> Option<GameState> {
+    pub fn init_game(num_players: u8, init_handsize: u8) -> Option<GameState> {
         if num_players * init_handsize > 52 {
             return None;
         }
@@ -45,7 +52,7 @@ impl GameState {
 
         for i in 0..num_players {
             let new_player = Player {
-                name: i.to_string(),
+                name: i,
                 hand: Hand::hand_from(&mut deck, init_handsize as usize),
             };
             players.push(new_player);
@@ -109,6 +116,14 @@ impl GameState {
                 if self.current_turn != 0 {
                     self.current_turn -= 1;
                 }
+            } else {
+                // player loses a card
+                self.remove_card_from(previous_player);
+                if self.current_turn == 0 {
+                    self.current_turn = self.players.len() - 1;
+                } else {
+                    self.current_turn -= 1;
+                }
             }
             true
         }
@@ -141,10 +156,17 @@ impl GameState {
         for player in &self.players {
             let hand_size = player.hand.cards.len();
             new_players.push(Player {
-               name: player.name.clone(),
-               hand: Hand::hand_from(&mut deck, hand_size)
+                name: player.name.clone(),
+                hand: Hand::hand_from(&mut deck, hand_size),
             });
         }
         self.players = new_players;
+    }
+
+    pub fn display(&self) {
+        for player in &self.players {
+            println!("Player {}: ", player.name);
+            println!("{}", player.hand.to_string());
+        }
     }
 }
