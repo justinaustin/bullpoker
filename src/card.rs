@@ -5,7 +5,7 @@ pub enum Suit {
     Clubs,
     Spades,
     Hearts,
-    Diamonds
+    Diamonds,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd)]
@@ -22,13 +22,13 @@ pub enum Rank {
     Jack,
     Queen,
     King,
-    Ace
+    Ace,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Card {
     pub suit: Suit,
-    pub rank: Rank
+    pub rank: Rank,
 }
 
 impl Suit {
@@ -37,7 +37,7 @@ impl Suit {
             &Suit::Clubs => "♣",
             &Suit::Diamonds => "♦",
             &Suit::Hearts => "♥",
-            &Suit::Spades => "♠"
+            &Suit::Spades => "♠",
         };
         output
     }
@@ -58,7 +58,7 @@ impl Rank {
             &Rank::Jack => "J",
             &Rank::Queen => "Q",
             &Rank::King => "K",
-            &Rank::Ace => "A"
+            &Rank::Ace => "A",
         };
         output
     }
@@ -77,8 +77,8 @@ impl Rank {
             &Rank::Jack => 11,
             &Rank::Queen => 12,
             &Rank::King => 13,
-            &Rank::Ace => 14 
-       }
+            &Rank::Ace => 14, 
+        }
     }
 
     pub fn from_u8(num: u8) -> Option<Rank> {
@@ -96,7 +96,7 @@ impl Rank {
             12 => Some(Rank::Queen),
             13 => Some(Rank::King),
             14 => Some(Rank::Ace),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -104,12 +104,12 @@ impl Rank {
 impl PartialOrd for Card {
     fn partial_cmp(&self, other: &Card) -> Option<Ordering> {
         Some(self.rank.cmp(&other.rank))
-    }    
+    }
 }
 
 impl Ord for Card {
     fn cmp(&self, other: &Card) -> Ordering {
-        self.rank.cmp(&other.rank)    
+        self.rank.cmp(&other.rank)
     }
 }
 
@@ -126,13 +126,13 @@ impl Card {
                 output.push_str(self.suit.to_string());
                 output.push_str("  |");
                 output
-            },
+            }
             2 => {
                 let mut output = "|  ".to_owned();
                 output.push_str(self.suit.to_string());
                 output.push_str("  |");
                 output
-            },
+            }
             3 => {
                 let mut output = "|  ".to_owned();
                 output.push_str(self.suit.to_string());
@@ -142,8 +142,8 @@ impl Card {
                 output.push_str(self.rank.to_string());
                 output.push_str("|");
                 output
-            },
-            _ => "+-----+".to_owned()
+            }
+            _ => "+-----+".to_owned(),
         }
     }
     pub fn to_string(&self) -> String {
@@ -156,10 +156,22 @@ impl Card {
         output
     }
     pub fn get_all_with_rank(rank: Rank) -> [Card; 4] {
-        let mut output = [Card { suit: Suit::Clubs, rank: rank }; 4];
-        output[1] = Card { suit: Suit::Diamonds, rank: rank };
-        output[2] = Card { suit: Suit::Hearts, rank: rank };
-        output[3] = Card { suit: Suit::Spades, rank: rank };
+        let mut output = [Card {
+            suit: Suit::Clubs,
+            rank: rank,
+        }; 4];
+        output[1] = Card {
+            suit: Suit::Diamonds,
+            rank: rank,
+        };
+        output[2] = Card {
+            suit: Suit::Hearts,
+            rank: rank,
+        };
+        output[3] = Card {
+            suit: Suit::Spades,
+            rank: rank,
+        };
         output
     }
 }
