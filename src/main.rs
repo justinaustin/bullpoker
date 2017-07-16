@@ -2,6 +2,7 @@ extern crate rand;
 
 mod card;
 mod game;
+mod logic;
 mod poker;
 
 use std::io;
