@@ -7,12 +7,12 @@ use card::{Card, Suit, Rank};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct BPFlush {
-    pub rank: Rank,
+    pub card: Card,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct BPStraightFlush {
-    pub rank: Rank,
+    pub card: Card,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd)]
@@ -30,25 +30,25 @@ pub enum HandValue {
 
 impl PartialOrd for BPFlush {
     fn partial_cmp(&self, other: &BPFlush) -> Option<Ordering> {
-        Some(other.rank.cmp(&self.rank))
+        Some(other.card.cmp(&self.card))
     }
 }
 
 impl Ord for BPFlush {
     fn cmp(&self, other: &BPFlush) -> Ordering {
-        other.rank.cmp(&self.rank)
+        other.card.cmp(&self.card)
     }
 }
 
 impl PartialOrd for BPStraightFlush {
     fn partial_cmp(&self, other: &BPStraightFlush) -> Option<Ordering> {
-        Some(other.rank.cmp(&self.rank))
+        Some(other.card.cmp(&self.card))
     }
 }
 
 impl Ord for BPStraightFlush {
     fn cmp(&self, other: &BPStraightFlush) -> Ordering {
-        other.rank.cmp(&self.rank)
+        other.card.cmp(&self.card)
     }
 }
 
@@ -144,26 +144,27 @@ impl Hand {
     pub fn contains_handvalue(&self, value: &HandValue) -> bool {
         match value {
             &HandValue::StraightFlush(bfsf) => {
-                if bfsf.rank < Rank::Six {
+                if !self.cards.contains(&bfsf.card) {
                     return false;
                 }
-                let potential_tops = self.get_cards_with_rank(bfsf.rank);
-                for top in potential_tops {
-                    let rank_u8 = top.rank.to_u8();
-                    let mut is_sf = true;
-                    for i in (rank_u8 - 4)..rank_u8 {
-                        let rank = Rank::from_u8(i).unwrap();
-                        let card = Card {
-                            suit: top.suit,
-                            rank: rank,
-                        };
-                        if !self.cards.contains(&card) {
-                            is_sf = false
-                        }
+                if bfsf.card.rank < Rank::Six {
+                    return false;
+                }
+                let top = bfsf.card;
+                let rank_u8 = top.rank.to_u8();
+                let mut is_sf = true;
+                for i in (rank_u8 - 4)..rank_u8 {
+                    let rank = Rank::from_u8(i).unwrap();
+                    let card = Card {
+                        suit: top.suit,
+                        rank: rank,
+                    };
+                    if !self.cards.contains(&card) {
+                        is_sf = false
                     }
-                    if is_sf {
-                        return true;
-                    }
+                }
+                if is_sf {
+                    return true;
                 }
                 return false;
             }
@@ -197,25 +198,26 @@ impl Hand {
                 return total_two >= 2;
             }
             &HandValue::Flush(bff) => {
-                let potential_tops = self.get_cards_with_rank(bff.rank);
-                for top in &potential_tops {
-                    let mut total = 1;
-                    let rank_u8 = top.rank.to_u8();
-                    for rank in 2..rank_u8 {
-                        let rank_card = Rank::from_u8(rank).unwrap();
-                        let card = Card {
-                            suit: top.suit,
-                            rank: rank_card,
-                        };
-                        if self.cards.contains(&card) {
-                            total += 1
-                        }
-                    }
-                    if total >= 5 {
-                        return true;
+                if !self.cards.contains(&bff.card) {
+                    return false;
+                }
+                let top = bff.card;
+                let mut total = 1;
+                let rank_u8 = top.rank.to_u8();
+                for rank in 2..rank_u8 {
+                    let rank_card = Rank::from_u8(rank).unwrap();
+                    let card = Card {
+                        suit: top.suit,
+                        rank: rank_card,
+                    };
+                    if self.cards.contains(&card) {
+                        total += 1
                     }
                 }
-                return false;
+                if total >= 5 {
+                    return true;
+                }
+            return false;
             }
             &HandValue::Straight(rank) => {
                 if rank < Rank::Six {

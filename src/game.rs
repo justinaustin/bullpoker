@@ -76,6 +76,9 @@ impl GameState {
     // called when the player 'calls' the previous player
     // returns true iff the player successfully called the bluff
     fn handle_call(&mut self) -> bool {
+        if self.current_bet == None {
+            println!("No current bet!");
+        }
         // construct deck with all players hand
         let mut all_cards = Hand::empty_hand();
         for player in &self.players {
@@ -101,6 +104,7 @@ impl GameState {
                 let index = self.current_turn;
                 self.remove_card_from(index);
             }
+            self.current_bet = None;
             false
         } else {
             // Previous player loses a card
@@ -125,6 +129,7 @@ impl GameState {
                     self.current_turn -= 1;
                 }
             }
+            self.current_bet = None;
             true
         }
     }

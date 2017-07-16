@@ -48,27 +48,41 @@ fn parse_handvalue() -> HandValue {
     println!("Enter Your Bet (e.g. quad A):");
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
-        Ok(n) => {
+        Ok(_) => {
             let vec: Vec<&str> = input.split(" ").collect();
+            let mut rank_one = None;
+            let mut rank_two = None;
+            let mut card = None;
             let hand = vec[0].trim();
-            let rank_str = vec[1].trim();
-            let rank_one = Rank::from_str(rank_str).unwrap();
-            let rank_two = if vec.len() == 3 {
-                let rank_one_str = vec[2].trim();
-                Rank::from_str(rank_one_str).unwrap()
+            if vec[1].trim().len() == 1 {
+                rank_one = Rank::from_str(vec[1].trim());
             } else {
-                Rank::Two
-            };
+                let ch = vec[1].chars().nth(0).unwrap();
+                let suit = match vec[1].chars().nth(1).unwrap() {
+                    'C' => Suit::Clubs,
+                    'D' => Suit::Diamonds,
+                    'H' => Suit::Hearts,
+                    'S' => Suit::Spades,
+                    _ => panic!()
+                };
+                card = Some(Card {
+                    rank: Rank::from_str(&ch.to_string()).unwrap(),
+                    suit: suit
+                });
+            }
+            if vec.len() == 3 {
+                rank_two = Rank::from_str(vec[2].trim());
+            }
             let handvalue = match hand {
-                "high" => HandValue::HighCard(rank_one),
-                "pair" => HandValue::OnePair(rank_one),
-                "twopair" => HandValue::TwoPair(rank_one, rank_two),
-                "triple" => HandValue::ThreeOfAKind(rank_one),
-                "straight" => HandValue::Straight(rank_one),
-                "flush" => HandValue::Flush(BPFlush { rank: rank_one }),
-                "fullhouse" => HandValue::FullHouse(rank_one, rank_two),
-                "quad" => HandValue::FourOfAKind(rank_one),
-                "straightflush" => HandValue::StraightFlush(BPStraightFlush { rank: rank_one }),
+                "high" => HandValue::HighCard(rank_one.unwrap()),
+                "pair" => HandValue::OnePair(rank_one.unwrap()),
+                "twopair" => HandValue::TwoPair(rank_one.unwrap(), rank_two.unwrap()),
+                "triple" => HandValue::ThreeOfAKind(rank_one.unwrap()),
+                "straight" => HandValue::Straight(rank_one.unwrap()),
+                "flush" => HandValue::Flush(BPFlush { card: card.unwrap() }),
+                "fullhouse" => HandValue::FullHouse(rank_one.unwrap(), rank_two.unwrap()),
+                "quad" => HandValue::FourOfAKind(rank_one.unwrap()),
+                "straightflush" => HandValue::StraightFlush(BPStraightFlush { card: card.unwrap() }),
                 _ => panic!(),
             };
             handvalue
