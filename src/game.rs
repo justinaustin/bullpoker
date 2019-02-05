@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use poker::{Hand, HandValue};
+use crate::poker::{Hand, HandValue};
 
 #[derive(Debug, Clone)]
 pub struct Player {
@@ -22,22 +22,22 @@ pub enum GameMove {
 }
 
 impl GameState {
-    pub fn handle_gamemove(mut self, gm: GameMove) -> GameState {
+    pub fn handle_gamemove(&mut self, gm: GameMove) {
         match gm {
             GameMove::NewGame(num_players, init_handsize) => {
                 if let Some(gamestate) = GameState::init_game(num_players, init_handsize) {
-                    gamestate
+                    // Reassign all fields in currect struct to new struct.
+                    // TODO: Make sure this is the case
+                    *self = gamestate
                 } else {
                     panic!("TODO")
                 }
             }
             GameMove::Bet(hv) => {
                 self.turn_after(hv);
-                return self.clone();
             }
             GameMove::Call() => {
-                let _ = self.handle_call();
-                return self.clone();
+                self.handle_call();
             }
         }
     }
@@ -73,8 +73,8 @@ impl GameState {
         }
     }
 
-    // called when the player 'calls' the previous player
-    // returns true iff the player successfully called the bluff
+    /// called when the player 'calls' the previous player
+    /// returns true iff the player successfully called the bluff
     fn handle_call(&mut self) -> bool {
         if self.current_bet == None {
             println!("No current bet!");
@@ -134,7 +134,7 @@ impl GameState {
         }
     }
 
-    // Removes a card from the input players hand
+    /// Removes a card from the input players hand
     fn remove_card_from(&mut self, index: usize) {
         let mut new_players = vec![];
         let mut i = 0;
@@ -154,7 +154,7 @@ impl GameState {
         self.players = new_players;
     }
 
-    // Redeals cards
+    /// Redeals cards
     fn redeal(&mut self) {
         let mut new_players = vec![];
         let mut deck = Hand::get_full_deck();

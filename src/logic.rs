@@ -1,4 +1,4 @@
-use poker::{Hand, HandValue};
+use crate::poker::{Hand, HandValue};
 
 // Returns the probability that the handvalue exists given your hand and the 
 // total amount of cards

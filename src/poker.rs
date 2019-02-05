@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use rand::{Rng, thread_rng};
 
-use card::{Card, Suit, Rank};
+use crate::card::{Card, Suit, Rank};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -295,8 +295,8 @@ impl Hand {
 
 #[cfg(test)]
 mod test {
-    use poker::{Hand, HandValue, BPFlush, BPStraightFlush};
-    use card::{Card, Suit, Rank};
+    use crate::poker::{Hand, HandValue, BPFlush, BPStraightFlush};
+    use crate::card::{Card, Suit, Rank};
 
     #[test]
     fn test_contains_high_card() {

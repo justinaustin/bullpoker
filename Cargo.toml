@@ -2,6 +2,7 @@
 name = "bullpoker"
 version = "0.1.0"
 authors = ["justin"]
+edition = "2018"
 
 [dependencies]
 rand = "0.3.15"

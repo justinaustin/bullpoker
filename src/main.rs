@@ -26,14 +26,14 @@ fn main() {
                 match input.trim() {
                     "new" => {
                         let (players, cards) = parse_players_cards();
-                        state = state.handle_gamemove(GameMove::NewGame(players, cards));
+                        state.handle_gamemove(GameMove::NewGame(players, cards));
                     }
                     "bet" => {
                         let handvalue = parse_handvalue();
-                        state = state.handle_gamemove(GameMove::Bet(handvalue));
+                        state.handle_gamemove(GameMove::Bet(handvalue));
                     }
                     "call" => {
-                        state = state.handle_gamemove(GameMove::Call());
+                        state.handle_gamemove(GameMove::Call());
                     }
                     "quit" => break,
                     _ => println!("Invalid input!"),
